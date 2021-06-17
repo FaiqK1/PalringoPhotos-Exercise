@@ -31,12 +31,9 @@ class PhotoCell: UICollectionViewCell {
             
             if let photo = photo {
                 self.fetchTask = CachedRequest.request(url: photo.url) { data, isCached in
-                    //TODO: CLEAN UP HERE FAIQ
-                    //guard data != nil else { return }
-                    //let img = UIImage(data: data)
+                    
                     guard let data = data else { return }
                     guard let img = UIImage(data: data) else { return }
-                    
                     
                     if isCached {
                         self.updatePhotoImageView(img)
@@ -56,18 +53,26 @@ class PhotoCell: UICollectionViewCell {
     
     fileprivate func updatePhotoImageView(_ image: UIImage, transition: Bool = false) {
         //FAIQ - MOVED TO MAIN THREAD
-        // Reduced Transition duration
-        
+        // Removed Transition duration
+        // Replaced with animating with alpha instead to achieve same effect
         
         DispatchQueue.main.async {
+            self.imageView?.image = image
+            self.imageView?.alpha = 0
             
-            if transition {
-                UIView.transition(with: self, duration: 0.2, options: .transitionCrossDissolve, animations: {
-                    self.imageView?.image = image
-                }, completion: nil)
-            } else {
-                self.imageView?.image = image
+            ////DECIDED to use .animate with Alpha instead, seems less intensive and achieves same effect as below
+            UIView.animate(withDuration: 1.0) {
+                self.imageView?.alpha = 1
             }
+        
+            
+//            if transition {
+//                UIView.transition(with: self, duration: 1.0, options: .transitionCrossDissolve, animations: {
+//                    self.imageView?.image = image
+//                }, completion: nil)
+//            } else {
+//                self.imageView?.image = image
+//            }
             
         }
     }
