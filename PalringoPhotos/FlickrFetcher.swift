@@ -117,7 +117,7 @@ class FlickrFetcher {
             paramitorString
 
         guard let requestURL = URL(string: urlString) else {return}
-        print("URL: \(requestURL)")
+        //print("URL: \(requestURL)")
         
         _ = CachedRequest.request(url: requestURL) { data, isCached in
             if let jsonDictionary = self.processJSON(data: data!) {

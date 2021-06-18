@@ -26,6 +26,9 @@
 		A8A066CF267BC0AA00140F5F /* EnumSegues.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A066CE267BC0AA00140F5F /* EnumSegues.swift */; };
 		A8A066DF267C127200140F5F /* extUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A066DE267C127200140F5F /* extUIView.swift */; };
 		A8A066E5267C859F00140F5F /* loaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A066E4267C859F00140F5F /* loaderView.swift */; };
+		A8A06704267C9EB400140F5F /* CommentsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A06703267C9EB400140F5F /* CommentsDetailViewController.swift */; };
+		A8A0670F267CB36000140F5F /* extString.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A0670E267CB36000140F5F /* extString.swift */; };
+		A8A06714267CC7D600140F5F /* CommentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A06713267CC7D600140F5F /* CommentsTableViewCell.swift */; };
 		B5586B511DB153B800E82C9B /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5586B501DB153B800E82C9B /* GradientView.swift */; };
 		B59C06221DB16D3500425848 /* CachedRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59C06211DB16D3500425848 /* CachedRequest.swift */; };
 /* End PBXBuildFile section */
@@ -76,6 +79,9 @@
 		A8A066CE267BC0AA00140F5F /* EnumSegues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumSegues.swift; sourceTree = "<group>"; };
 		A8A066DE267C127200140F5F /* extUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extUIView.swift; sourceTree = "<group>"; };
 		A8A066E4267C859F00140F5F /* loaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = loaderView.swift; sourceTree = "<group>"; };
+		A8A06703267C9EB400140F5F /* CommentsDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsDetailViewController.swift; sourceTree = "<group>"; };
+		A8A0670E267CB36000140F5F /* extString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extString.swift; sourceTree = "<group>"; };
+		A8A06713267CC7D600140F5F /* CommentsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsTableViewCell.swift; sourceTree = "<group>"; };
 		B5586B501DB153B800E82C9B /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		B59C06211DB16D3500425848 /* CachedRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -188,6 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				07F2581E1DB3B66A0077EACA /* PhotoCell.swift */,
+				A8A06713267CC7D600140F5F /* CommentsTableViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -206,6 +213,7 @@
 			children = (
 				A8A066B6267BB08300140F5F /* PhotographersViewController.swift */,
 				075F3AF61DB1001D00831312 /* PhotoCollectionViewController.swift */,
+				A8A06703267C9EB400140F5F /* CommentsDetailViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -233,6 +241,7 @@
 			isa = PBXGroup;
 			children = (
 				A8A066DE267C127200140F5F /* extUIView.swift */,
+				A8A0670E267CB36000140F5F /* extString.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -377,9 +386,12 @@
 				07F2581D1DB3B5400077EACA /* Photo.swift in Sources */,
 				A8A066E5267C859F00140F5F /* loaderView.swift in Sources */,
 				07F2581F1DB3B66A0077EACA /* PhotoCell.swift in Sources */,
+				A8A0670F267CB36000140F5F /* extString.swift in Sources */,
 				A86AFD9D267B622F006A0103 /* EnumPhotographers.swift in Sources */,
 				07F258211DB3BA8F0077EACA /* PhotoComment.swift in Sources */,
 				075F3AC71DB0FFE100831312 /* AppDelegate.m in Sources */,
+				A8A06704267C9EB400140F5F /* CommentsDetailViewController.swift in Sources */,
+				A8A06714267CC7D600140F5F /* CommentsTableViewCell.swift in Sources */,
 				075F3AF71DB1001D00831312 /* PhotoCollectionViewController.swift in Sources */,
 				B5586B511DB153B800E82C9B /* GradientView.swift in Sources */,
 				B59C06221DB16D3500425848 /* CachedRequest.swift in Sources */,

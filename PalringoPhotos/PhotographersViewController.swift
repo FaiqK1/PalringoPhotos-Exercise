@@ -50,7 +50,7 @@ extension PhotographersViewController {
     func fetchPhotos(_ photographers: [Photographers]) {
         
         for photographer in photographers {
-            print("NAME: \(photographer.name) URL: \(photographer.url)")
+            //print("NAME: \(photographer.name) URL: \(photographer.url)")
             
             //Thought i would utilize the CURRENT CachedRequest Class here
             _ = CachedRequest.request(url: photographer.url) { data, isCached in
@@ -64,7 +64,7 @@ extension PhotographersViewController {
                     self.profilePhotos.append(img)
                 }
                 self.refreshTableView()
-                
+                //FIXME: This approach is risky, cache could send back images in a different order
             }
         }
     }
@@ -121,7 +121,7 @@ extension PhotographersViewController: UITableViewDataSource, UITableViewDelegat
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        print("\(preApprovedPhotographers![indexPath.row].name)")
+        //print("\(preApprovedPhotographers![indexPath.row].name)")
         
         goToPhotos(name:preApprovedPhotographers![indexPath.row].name, id: preApprovedPhotographers![indexPath.row].id, image: profilePhotos[indexPath.row])
     }
@@ -141,12 +141,10 @@ extension PhotographersViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == EnumSegues.photographersToPhotos.segueIdentifier {
-            print("HEADING TO PHOTOS WITH ID: \(selectedId)")
             
             if let destVc = segue.destination as? PhotoCollectionViewController {
                 destVc.selectedPhotographerID    = selectedId
                 destVc.selectedPhotographerName  = selectedName
-                
             }
         }
     }

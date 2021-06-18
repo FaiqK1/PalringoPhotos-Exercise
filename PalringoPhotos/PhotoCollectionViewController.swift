@@ -16,8 +16,8 @@ class PhotoCollectionViewController: UICollectionViewController, UICollectionVie
     //@IBOutlet weak var collectionView: UICollectionView? //Not needed here being a UICollectionViewController
     
     //MARK: - PROPERTIES
-    var photos: [[Photo]] = []
-    var isFetchingPhotos = false
+    private var photos: [[Photo]] = []
+    private var isFetchingPhotos = false
     
 
     var selectedPhotographerID : String? {
@@ -31,17 +31,24 @@ class PhotoCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
+    private var selectedPhoto : Photo? //CommentsDetailVC use only
+    
+    
     
     
     //MARK: - VC LifeCycle
+    
+    deinit {
+        print("MEMORY RELEASED - PhotoCollectionVC")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        //self.title = EnumPhotographers.dersascha.displayName
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
     }
     
     
@@ -55,6 +62,27 @@ extension PhotoCollectionViewController {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 200)
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let photoSelected = self.photos[indexPath.section][indexPath.item]
+        selectedPhoto  = photoSelected
+        modalToCommentsDetailVC()
+    }
+    
+    
+    private func modalToCommentsDetailVC() {
+        performSegue(withIdentifier: EnumSegues.photosToDetailComments.segueIdentifier, sender: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    
+        if segue.identifier == EnumSegues.photosToDetailComments.segueIdentifier {
+            if let destVc = segue.destination as? CommentsDetailViewController {
+                destVc.selectedPhoto      = selectedPhoto
+            }
+        }
+    }
+    
     
     
     // MARK: - UICollectionViewDataSource
@@ -86,7 +114,15 @@ extension PhotoCollectionViewController {
     
     
     
-    // MARK: - Fetch Photo Data
+    
+}
+
+
+
+// MARK: - Fetch Photo Data
+
+extension PhotoCollectionViewController {
+    
     
     @objc private func fetchNextPage() {
         if isFetchingPhotos { return }

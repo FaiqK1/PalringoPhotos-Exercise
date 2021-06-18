@@ -10,11 +10,14 @@ import Foundation
 
 enum EnumSegues {
     case photographersToPhotos
+    case photosToDetailComments
     
     var segueIdentifier : String {
         switch self {
             case .photographersToPhotos:
                 return "goToPhotos"
+            case .photosToDetailComments:
+                return "presentComments"
         }
     }
 }
