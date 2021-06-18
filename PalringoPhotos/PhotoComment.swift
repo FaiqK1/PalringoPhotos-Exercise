@@ -12,4 +12,19 @@ struct PhotoComment {
     let id: String
     let author: String
     let comment: String
+    
+    
+    init?(dictionary: NSDictionary) {
+        guard
+            let idString = dictionary.value(forKeyPath:"id") as? String,
+            let authorString = dictionary.value(forKeyPath:"authorname") as? String,
+            let commentString = dictionary.value(forKeyPath:"_content") as? String
+            else { return nil }
+
+        self.id      = idString
+        self.author  = authorString
+        self.comment = commentString
+    }
 }
+
+

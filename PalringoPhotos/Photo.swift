@@ -16,4 +16,21 @@ struct Photo: Equatable {
     static func ==(lhs: Photo, rhs: Photo) -> Bool {
         return lhs.id == rhs.id
     }
+    
+    
+    init?(dictionary: NSDictionary) {
+        guard
+        let idString = dictionary.value(forKeyPath:"id") as? String,
+        let nameString = dictionary.value(forKeyPath:"title") as? String,
+        let originalString =
+            dictionary.value(forKeyPath:"url_z") as? String ??
+            dictionary.value(forKeyPath:"url_-") as? String,
+        let url = URL(string: originalString)
+        else {return nil}
+        
+        self.id   = idString
+        self.name = nameString
+        self.url  = url
+    }
 }
+

@@ -7,10 +7,60 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Select your photographer-->
+        <scene sceneID="pXy-Rz-pnN">
+            <objects>
+                <viewController id="oZ0-4b-rUo" customClass="PhotographersViewController" customModule="PalringoPhotos" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="K3G-Rk-G1a"/>
+                        <viewControllerLayoutGuide type="bottom" id="PbM-35-zxx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="6NQ-AI-CUE">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Vyz-hS-0j1">
+                                <rect key="frame" x="0.0" y="122" width="375" height="656"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="photographersCell" rowHeight="70" id="uIw-wc-lqS">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="70"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="uIw-wc-lqS" id="Lzk-XV-qdZ">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="70"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="oZ0-4b-rUo" id="pyf-lr-Rbz"/>
+                                    <outlet property="delegate" destination="oZ0-4b-rUo" id="C1J-Zz-FjG"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Vyz-hS-0j1" firstAttribute="leading" secondItem="6NQ-AI-CUE" secondAttribute="leading" id="RbY-No-fGc"/>
+                            <constraint firstItem="Vyz-hS-0j1" firstAttribute="top" secondItem="K3G-Rk-G1a" secondAttribute="bottom" id="ci2-ZS-gu1"/>
+                            <constraint firstItem="PbM-35-zxx" firstAttribute="top" secondItem="Vyz-hS-0j1" secondAttribute="bottom" id="isM-br-WSU"/>
+                            <constraint firstAttribute="trailing" secondItem="Vyz-hS-0j1" secondAttribute="trailing" id="wup-vi-3ij"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Select your photographer" prompt="Photographers" largeTitleDisplayMode="always" id="Ona-TY-gSf"/>
+                    <connections>
+                        <outlet property="tableView" destination="Vyz-hS-0j1" id="wHh-iK-VlM"/>
+                        <segue destination="8nV-Sw-2bH" kind="show" identifier="goToPhotos" id="Tdz-Nz-I4K"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uOM-kz-pU2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="989.60000000000002" y="157.38916256157637"/>
+        </scene>
         <!--{Photographer Name}-->
         <scene sceneID="ctv-fE-E48">
             <objects>
-                <collectionViewController id="8nV-Sw-2bH" customClass="PhotoCollectionViewController" customModule="PalringoPhotos" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController modalTransitionStyle="crossDissolve" modalPresentationStyle="overFullScreen" id="8nV-Sw-2bH" customClass="PhotoCollectionViewController" customModule="PalringoPhotos" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="J3M-ja-ULk">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -90,19 +140,16 @@
                             </collectionViewCell>
                         </cells>
                         <connections>
-                            <outlet property="dataSource" destination="7eb-Jl-vno" id="pmR-K1-6ZS"/>
-                            <outlet property="delegate" destination="8nV-Sw-2bH" id="jrW-Ld-i0h"/>
+                            <outlet property="dataSource" destination="8nV-Sw-2bH" id="kO3-Jg-mf7"/>
+                            <outlet property="delegate" destination="8nV-Sw-2bH" id="joA-rA-b7h"/>
                         </connections>
                     </collectionView>
                     <navigationItem key="navigationItem" title="{Photographer Name}" prompt="Photos" id="ulq-JA-i00"/>
+                    <connections>
+                        <outlet property="loadingView" destination="NJX-Qk-tfv" id="oU5-Px-xlP"/>
+                    </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rW0-iC-ygh" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <customObject id="7eb-Jl-vno" customClass="ImageDataSource" customModule="PalringoPhotos" customModuleProvider="target">
-                    <connections>
-                        <outlet property="collectionView" destination="J3M-ja-ULk" id="ZSt-eA-af4"/>
-                        <outlet property="loadingView" destination="NJX-Qk-tfv" id="Lvd-pI-CCB"/>
-                    </connections>
-                </customObject>
                 <view opaque="NO" contentMode="scaleToFill" id="NJX-Qk-tfv">
                     <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -128,7 +175,7 @@
                     </constraints>
                 </view>
             </objects>
-            <point key="canvasLocation" x="1065" y="158"/>
+            <point key="canvasLocation" x="1975" y="158"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="f1A-g5-Ahf">
@@ -141,7 +188,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="8nV-Sw-2bH" kind="relationship" relationship="rootViewController" id="ABQ-Lw-mGF"/>
+                        <segue destination="oZ0-4b-rUo" kind="relationship" relationship="rootViewController" id="BJg-2g-1ZZ"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JXi-N1-rX6" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -24,7 +24,6 @@ class CachedRequest {
             return nil
             
         } else {
-            
             let config      = URLSessionConfiguration.default
             config.urlCache = cache
             
@@ -34,6 +33,7 @@ class CachedRequest {
                 
                 if let response = response, let data = data {
                     let cacheResponse = CachedURLResponse(response: response, data: data)
+                    print(request)
                     URLCache.shared.storeCachedResponse(cacheResponse,for: request)
                 }
                 

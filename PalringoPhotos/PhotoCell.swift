@@ -64,15 +64,6 @@ class PhotoCell: UICollectionViewCell {
             UIView.animate(withDuration: 1.0) {
                 self.imageView?.alpha = 1
             }
-        
-            
-//            if transition {
-//                UIView.transition(with: self, duration: 1.0, options: .transitionCrossDissolve, animations: {
-//                    self.imageView?.image = image
-//                }, completion: nil)
-//            } else {
-//                self.imageView?.image = image
-//            }
             
         }
     }

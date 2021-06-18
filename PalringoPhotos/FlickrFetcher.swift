@@ -10,46 +10,50 @@ import UIKit
 
 
 
-private let apiKey = "409c210c52dc34ed07fcc512b82e859b" //MOVE INTO FLICKR ENDPOINT
 
-fileprivate extension Photo {
-    init?(dictionary: NSDictionary) {
-        guard
-        let idString = dictionary.value(forKeyPath:"id") as? String,
-        let nameString = dictionary.value(forKeyPath:"title") as? String,
-        let originalString =
-            dictionary.value(forKeyPath:"url_z") as? String ??
-            dictionary.value(forKeyPath:"url_-") as? String,
-        let url = URL(string: originalString)
-        else {return nil}
-        
-        self.id = idString
-        self.name = nameString
-        self.url = url
-    }
-}
+//fileprivate extension Photo {
+//    init?(dictionary: NSDictionary) {
+//        guard
+//        let idString = dictionary.value(forKeyPath:"id") as? String,
+//        let nameString = dictionary.value(forKeyPath:"title") as? String,
+//        let originalString =
+//            dictionary.value(forKeyPath:"url_z") as? String ??
+//            dictionary.value(forKeyPath:"url_-") as? String,
+//        let url = URL(string: originalString)
+//        else {return nil}
+//
+//        self.id   = idString
+//        self.name = nameString
+//        self.url  = url
+//    }
+//}
 
-fileprivate extension PhotoComment {
-    init?(dictionary: NSDictionary) {
-        guard
-            let idString = dictionary.value(forKeyPath:"id") as? String,
-            let authorString = dictionary.value(forKeyPath:"authorname") as? String,
-            let commentString = dictionary.value(forKeyPath:"_content") as? String
-            else { return nil }
+//fileprivate extension PhotoComment {
+//    init?(dictionary: NSDictionary) {
+//        guard
+//            let idString = dictionary.value(forKeyPath:"id") as? String,
+//            let authorString = dictionary.value(forKeyPath:"authorname") as? String,
+//            let commentString = dictionary.value(forKeyPath:"_content") as? String
+//            else { return nil }
+//
+//        self.id      = idString
+//        self.author  = authorString
+//        self.comment = commentString
+//    }
+//}
 
-        self.id = idString
-        self.author = authorString
-        self.comment = commentString
-    }
-}
 
 class FlickrFetcher {
     
-    func getPhotosUrls(forPage page: Int = 1,
+    
+    private let apiKey = "409c210c52dc34ed07fcc512b82e859b" //MOVE INTO NEW FLICKR ENDPOINT EVENTUALLY - NOT safe either way on client side
+    
+    
+    func getPhotosUrls(id: String, forPage page: Int = 1,
                        completion: @escaping ([Photo])->()) {
 
         let properties = [
-            "&user_id=\(Photographers.dersascha.rawValue)",
+            "&user_id=\(id)",
             "&page=\(page)",
             "&per_page=20",
             "&extras=url_-,url_z"
@@ -75,7 +79,9 @@ class FlickrFetcher {
     func getPhotoComments(for photo: Photo,
                        completion: @escaping ([PhotoComment])->()) {
 
-        let properties = ["&photo_id=\(photo.id)"]
+        let properties = [
+            "&photo_id=\(photo.id)"
+        ]
 
         request(method: "flickr.photos.comments.getList",
                 properties: properties) { object in
