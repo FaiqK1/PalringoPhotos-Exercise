@@ -98,7 +98,10 @@ extension CommentsDetailViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "commentsCell", for: indexPath) as? CommentsTableViewCell else {return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "commentsCell", for: indexPath) as? CommentsTableViewCell
+        else {
+            return UITableViewCell()
+        }
         
         cell.authorLbl.text             = "Author: \(comments?[indexPath.row].author ?? "Unknown")"
         cell.commentsLbl.attributedText = comments?[indexPath.row].comment.htmlToAttributedString

@@ -145,6 +145,7 @@ extension PhotographersViewController {
             if let destVc = segue.destination as? PhotoCollectionViewController {
                 destVc.selectedPhotographerID    = selectedId
                 destVc.selectedPhotographerName  = selectedName
+                destVc.selectedPhotographerImage = selectedImage
             }
         }
     }

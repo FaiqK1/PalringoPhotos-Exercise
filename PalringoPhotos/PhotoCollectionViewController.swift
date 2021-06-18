@@ -31,12 +31,26 @@ class PhotoCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
+    var selectedPhotographerImage : UIImage? {
+        didSet {
+            let customImageButton = ImageBarButton(withImage: selectedPhotographerImage)
+            customImageButton.button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+            self.navigationItem.leftBarButtonItem = customImageButton.barButtonItem()
+        }
+    }
+    
+
     private var selectedPhoto : Photo? //CommentsDetailVC use only
     
     
     
     
     //MARK: - VC LifeCycle
+    
+    @objc func backAction() {
+        navigationController?.popViewController(animated: true)
+    }
+    
     
     deinit {
         print("MEMORY RELEASED - PhotoCollectionVC")
@@ -103,7 +117,10 @@ extension PhotoCollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EnumIdentifiers.photos.cellId, for: indexPath) as! PhotoCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EnumIdentifiers.photos.cellId, for: indexPath) as? PhotoCell
+        else {
+            return UICollectionViewCell()
+        }
 
         let photo = self.photo(forIndexPath: indexPath)
         cell.photo = photo

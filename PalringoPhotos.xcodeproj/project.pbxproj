@@ -19,6 +19,7 @@
 		07F2581D1DB3B5400077EACA /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F2581C1DB3B5400077EACA /* Photo.swift */; };
 		07F2581F1DB3B66A0077EACA /* PhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F2581E1DB3B66A0077EACA /* PhotoCell.swift */; };
 		07F258211DB3BA8F0077EACA /* PhotoComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F258201DB3BA8F0077EACA /* PhotoComment.swift */; };
+		A865FF64267D241F0026D95E /* ImageBarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A865FF63267D241F0026D95E /* ImageBarButton.swift */; };
 		A86AFD9D267B622F006A0103 /* EnumPhotographers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86AFD9C267B622F006A0103 /* EnumPhotographers.swift */; };
 		A8A066B7267BB08300140F5F /* PhotographersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A066B6267BB08300140F5F /* PhotographersViewController.swift */; };
 		A8A066C2267BB6E300140F5F /* Photographers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A066C1267BB6E300140F5F /* Photographers.swift */; };
@@ -72,6 +73,7 @@
 		07F2581C1DB3B5400077EACA /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		07F2581E1DB3B66A0077EACA /* PhotoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCell.swift; sourceTree = "<group>"; };
 		07F258201DB3BA8F0077EACA /* PhotoComment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoComment.swift; sourceTree = "<group>"; };
+		A865FF63267D241F0026D95E /* ImageBarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageBarButton.swift; sourceTree = "<group>"; };
 		A86AFD9C267B622F006A0103 /* EnumPhotographers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumPhotographers.swift; sourceTree = "<group>"; };
 		A8A066B6267BB08300140F5F /* PhotographersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotographersViewController.swift; sourceTree = "<group>"; };
 		A8A066C1267BB6E300140F5F /* Photographers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photographers.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 			children = (
 				B5586B501DB153B800E82C9B /* GradientView.swift */,
 				A8A066E4267C859F00140F5F /* loaderView.swift */,
+				A865FF63267D241F0026D95E /* ImageBarButton.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -385,6 +388,7 @@
 				A8A066C2267BB6E300140F5F /* Photographers.swift in Sources */,
 				07F2581D1DB3B5400077EACA /* Photo.swift in Sources */,
 				A8A066E5267C859F00140F5F /* loaderView.swift in Sources */,
+				A865FF64267D241F0026D95E /* ImageBarButton.swift in Sources */,
 				07F2581F1DB3B66A0077EACA /* PhotoCell.swift in Sources */,
 				A8A0670F267CB36000140F5F /* extString.swift in Sources */,
 				A86AFD9D267B622F006A0103 /* EnumPhotographers.swift in Sources */,
