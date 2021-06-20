@@ -8,10 +8,15 @@
 
 import UIKit
 
+//DEV NOTES:
+///resources: https://github.com/apple/swift/blob/main/docs/StringManifesto.md#high-performance-string-processing
+//Conversion was taking place at CellForRow on comments TableView as a quick implementation. But decided to move this conversion code in PhotoComment.swift model's init instead.
+
 extension String {
     
     var htmlToAttributedString: NSAttributedString? {
-        guard let data = data(using: .unicode) else { return nil }
+        
+        guard let data = data(using: .utf8) else { return nil }
         do {
             return try NSAttributedString(
                 data: data,

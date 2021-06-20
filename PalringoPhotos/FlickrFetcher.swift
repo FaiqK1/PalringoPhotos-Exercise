@@ -2,65 +2,29 @@
 //  FlickrFetcher.swift
 //  PalringoPhotos
 //
-//  Created by Benjamin Briggs on 14/10/2016.
-//  Copyright © 2016 Palringo. All rights reserved.
+//  Created by Faiq Khan on 20/06/2021.
+//  Copyright © 2021 Palringo. All rights reserved.
 //
 
 import UIKit
 
-
-
-
-//fileprivate extension Photo {
-//    init?(dictionary: NSDictionary) {
-//        guard
-//        let idString = dictionary.value(forKeyPath:"id") as? String,
-//        let nameString = dictionary.value(forKeyPath:"title") as? String,
-//        let originalString =
-//            dictionary.value(forKeyPath:"url_z") as? String ??
-//            dictionary.value(forKeyPath:"url_-") as? String,
-//        let url = URL(string: originalString)
-//        else {return nil}
-//
-//        self.id   = idString
-//        self.name = nameString
-//        self.url  = url
-//    }
-//}
-
-//fileprivate extension PhotoComment {
-//    init?(dictionary: NSDictionary) {
-//        guard
-//            let idString = dictionary.value(forKeyPath:"id") as? String,
-//            let authorString = dictionary.value(forKeyPath:"authorname") as? String,
-//            let commentString = dictionary.value(forKeyPath:"_content") as? String
-//            else { return nil }
-//
-//        self.id      = idString
-//        self.author  = authorString
-//        self.comment = commentString
-//    }
-//}
-
-
 class FlickrFetcher {
     
+    static let shared = FlickrFetcher()
     
-    private let apiKey = "409c210c52dc34ed07fcc512b82e859b" //MOVE INTO NEW FLICKR ENDPOINT EVENTUALLY - NOT safe either way on client side
     
-    
-    func getPhotosUrls(id: String, forPage page: Int = 1,
-                       completion: @escaping ([Photo])->()) {
-
-        let properties = [
-            "&user_id=\(id)",
-            "&page=\(page)",
-            "&per_page=20",
-            "&extras=url_-,url_z"
-        ]
-
-        request(method: "flickr.people.getPhotos", properties: properties) { object in
-            
+    func getPhotosUrls(endpoint: Endpoint, completion: @escaping ([Photo])->()) {
+        
+        //compile components:
+        var components = URLComponents()
+        components.scheme     = endpoint.scheme
+        components.host       = endpoint.baseURL
+        components.path       = endpoint.path
+        components.queryItems = endpoint.parameters
+        
+        guard let url = components.url?.absoluteURL else { return }
+        
+        request(url: url) { (object) in
             DispatchQueue.global().async {
                 let photos = object.value(forKeyPath: "photos.photo") as? [NSDictionary]
                 let returnPhotos = photos?
@@ -75,72 +39,66 @@ class FlickrFetcher {
             }
         }
     }
+    
+    
+    func getPhotoComments(endpoint: Endpoint, completion: @escaping ([PhotoComment])->()) {
 
-    func getPhotoComments(for photo: Photo,
-                       completion: @escaping ([PhotoComment])->()) {
+        //compile components:
+        var components = URLComponents()
+        components.scheme     = endpoint.scheme
+        components.host       = endpoint.baseURL
+        components.path       = endpoint.path
+        components.queryItems = endpoint.parameters
+//
+        guard let url = components.url?.absoluteURL else { return }
+        
 
-        let properties = [
-            "&photo_id=\(photo.id)"
-        ]
+        request(url: url) { (object) in
+            DispatchQueue.global().async {
+                let comments = object.value(forKeyPath: "comments.comment") as? [NSDictionary]
+                let returnComments = comments?
+                    .map({ PhotoComment(dictionary: $0) })
+                    .filter({ $0 != nil })
+                    as? [PhotoComment] ?? []
 
-        request(method: "flickr.photos.comments.getList",
-                properties: properties) { object in
-                    DispatchQueue.global().async {
-                        let comments = object.value(forKeyPath: "comments.comment") as? [NSDictionary]
-                        let returnComments = comments?
-                            .map({ PhotoComment(dictionary: $0) })
-                            .filter({ $0 != nil })
-                            as? [PhotoComment] ?? []
-
-                        DispatchQueue.main.async {
-                            completion(returnComments)
-                        }
-                    }
+                DispatchQueue.main.async {
+                    completion(returnComments)
+                }
+            }
         }
+        
     }
-
-    private func request(method: String,
-                         properties: [String],
-                         completion: @escaping (NSDictionary)->()) {
-
-        let baseURL = "https://api.flickr.com/services/rest/?"
-        let methodString = "&method=\(method)"
-        let apiString = "&api_key=\(apiKey)"
-        let formatString = "&format=json"
-        let paramitorString = properties.reduce("", { $0 + $1})
+    
+    
+    
+    private func request(url: URL, completion: @escaping (NSDictionary) -> ()) {
         
-        let urlString =
-            baseURL +
-            methodString +
-            apiString +
-            formatString +
-            paramitorString
-
-        guard let requestURL = URL(string: urlString) else {return}
-        //print("URL: \(requestURL)")
-        
-        _ = CachedRequest.request(url: requestURL) { data, isCached in
-            if let jsonDictionary = self.processJSON(data: data!) {
+        _ = CachedRequest.request(url: url) { data, isCached in
+            guard let data = data else { return }
+            
+            if let jsonDictionary = self.processJSON(data: data) {
                 completion(jsonDictionary)
             }
         }
+        
     }
+    
     
     private func processJSON(data: Data) -> NSDictionary? {
         let dataString = String(data: data, encoding: String.Encoding.utf8)
         
-        let jsonString = dataString?
+        guard let jsonString = dataString?
             .replacingOccurrences(of: "jsonFlickrApi(", with: "")
-            .replacingOccurrences(of: ")", with: "").data(using: .utf8)
+                .replacingOccurrences(of: ")", with: "").data(using: .utf8) else { return [:] }
         
         do {
-            let result = try JSONSerialization.jsonObject(with: jsonString!,
-                                                          options: .mutableContainers)
+            let result = try JSONSerialization.jsonObject(with: jsonString,options: .mutableContainers)
             return result as? NSDictionary
-        } catch {print(error)}
-        
+        } catch {
+            print(error)
+        }
         return nil
     }
-    
-    
 }
+
+

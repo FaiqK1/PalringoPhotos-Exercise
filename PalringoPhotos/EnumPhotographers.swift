@@ -31,7 +31,7 @@ enum EnumPhotographers: String {
     var imageURL: URL {
         switch self {
         case .alfredoliverani:
-            return URL(string: "https://farm4.staticflickr.com/3796/buddyicons/41569704@N00_l.jpg")!
+            return URL(string: "https://farm4.staticflickr.com/3796/buddyicons/41569704@N00_l.jpg")! 
         case .dersascha:
             return URL(string: "https://farm6.staticflickr.com/5489/buddyicons/26383637@N06_r.jpg")!
         case .photographybytosh:

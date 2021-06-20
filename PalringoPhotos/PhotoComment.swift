@@ -11,7 +11,7 @@ import Foundation
 struct PhotoComment {
     let id: String
     let author: String
-    let comment: String
+    let comment: NSAttributedString
     
     
     init?(dictionary: NSDictionary) {
@@ -21,9 +21,11 @@ struct PhotoComment {
             let commentString = dictionary.value(forKeyPath:"_content") as? String
             else { return nil }
 
+        guard let convertedString = commentString.htmlToAttributedString else { return nil }
+        
         self.id      = idString
         self.author  = authorString
-        self.comment = commentString
+        self.comment = convertedString
     }
 }
 

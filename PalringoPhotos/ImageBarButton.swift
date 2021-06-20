@@ -12,9 +12,9 @@ class ImageBarButton : UIView {
     var button: UIButton!
     var imageView: UIImageView!
 
-    convenience init(withImage image: UIImage? = nil, frame: CGRect = CGRect(x: 0, y: 0, width: 40, height: 40), padding: CGFloat = 4) {
+    convenience init(withImage image: UIImage? = nil, frame: CGRect = CGRect(x: 0, y: 0, width: 38, height: 38), padding: CGFloat = 4) {
         
-        //Set up image frame
+        //designated initializer
         self.init(frame: frame)
         
         //Apply padding so image sits better on NavBar

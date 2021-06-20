@@ -10,6 +10,7 @@ import UIKit
 
 func loadingCenter(forView view: UIView, count: Int = 0) -> CGPoint {
     var y: CGFloat = 0
-    count > 0 ? (y = (view.bounds.maxY) - 60) : (y = (view.bounds.maxY))
-    return CGPoint(x: (view.bounds.midX ?? 0), y: y)
+    y = view.bounds.maxY - 100
+    //count > 0 ? (y = (view.bounds.maxY) - 100) : (y = (view.bounds.maxY / 2))
+    return CGPoint(x: (view.bounds.midX), y: y)
 }

@@ -33,9 +33,20 @@ class PhotoCollectionViewController: UICollectionViewController, UICollectionVie
     
     var selectedPhotographerImage : UIImage? {
         didSet {
-            let customImageButton = ImageBarButton(withImage: selectedPhotographerImage)
-            customImageButton.button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
-            self.navigationItem.leftBarButtonItem = customImageButton.barButtonItem()
+            
+            if selectedPhotographerImage != nil {
+                let customImageButton = ImageBarButton(withImage: selectedPhotographerImage ?? nil, padding: 2)
+                customImageButton.button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+                
+                self.navigationItem.leftItemsSupplementBackButton = true
+                //self.navigationItem.leftBarButtonItem = customImageButton.barButtonItem()
+                
+                let backButton = UIBarButtonItem(title: "  ", style: .plain, target: nil, action: nil)
+                self.navigationItem.leftBarButtonItems = [backButton, customImageButton.barButtonItem()]
+                
+                
+            }
+            
         }
     }
     
@@ -45,36 +56,79 @@ class PhotoCollectionViewController: UICollectionViewController, UICollectionVie
     
     
     
-    //MARK: - VC LifeCycle
     
-    @objc func backAction() {
-        navigationController?.popViewController(animated: true)
-    }
+    
     
     
     deinit {
         print("MEMORY RELEASED - PhotoCollectionVC")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        
-    }
     
     
 
 }
 
+//MARK: - VC Life Cycle
+
 extension PhotoCollectionViewController {
     
-    // MARK: - UICollectionViewDelegate
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        
+        //TODO: I would think about clearing the cache here at some point...
+    }
+    
+    
+    //NAVIGATE BACK
+    @objc func backAction() {
+        navigationController?.popViewController(animated: true)
+    }
+}
+
+
+
+
+//MARK: - LOADER
+
+extension PhotoCollectionViewController {
+    
+    fileprivate func removeLoader() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { //Just for the visuals
+            self.loadingView?.removeFromSuperview()
+        }
+    }
+    
+    fileprivate func showLoader() {
+        if let loadingView = loadingView {
+            self.view.addSubview(loadingView)
+            self.view.bringSubviewToFront(loadingView)
+            loadingView.layer.cornerRadius = 5
+            loadingView.sizeToFit()
+            loadingView.center = loadingCenter(forView: self.view)
+        }
+    }
+}
+
+// MARK: - UICollectionView
+
+extension PhotoCollectionViewController {
+    
+    // MARK: UICollectionView Delegate Functions
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 200)
+        var heightToUse : CGFloat = 200
+        
+        if UIScreen.main.bounds.width > 500 { //Just handling iPad sizing, crudely
+            heightToUse = UIScreen.main.bounds.height / 3
+        }
+        return CGSize(width: collectionView.bounds.width, height: heightToUse)
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -99,7 +153,7 @@ extension PhotoCollectionViewController {
     
     
     
-    // MARK: - UICollectionViewDataSource
+    // MARK: UICollectionView DataSource Functions
     
     func photo(forIndexPath indexPath: IndexPath) -> Photo {
         if indexPath.section == photos.count - 1 {
@@ -128,11 +182,8 @@ extension PhotoCollectionViewController {
         return cell
     }
     
-    
-    
-    
-    
 }
+
 
 
 
@@ -145,24 +196,21 @@ extension PhotoCollectionViewController {
         if isFetchingPhotos { return }
         isFetchingPhotos = true
         
-        if let loadingView = loadingView, let collectionView = self.collectionView.superview {
-            self.collectionView.addSubview(loadingView)
-            loadingView.layer.cornerRadius = 5
-            loadingView.sizeToFit()
-            loadingView.center = loadingCenter(forView: collectionView, count: photos.count)
-        }
+        showLoader()
         
         let currentPage = photos.count
-        guard let photographerId = selectedPhotographerID else { print("Error with photographer string"); return } //HANDLE alert here
+        guard let photographerId = selectedPhotographerID else { print("Error with photographer id"); return } //HANDLE alert here
         
-        FlickrFetcher().getPhotosUrls(id: photographerId,forPage: currentPage + 1) { [weak self] in
+        //NEW:
+        FlickrFetcher.shared.getPhotosUrls(endpoint: FlickrEndpoint.getPhotos(id: photographerId, page: currentPage + 1)) { [weak self] in
             if $0.count > 0 {
                 self?.photos.append($0)
                 self?.collectionView.insertSections(IndexSet(integer: currentPage))
                 self?.isFetchingPhotos = false
             }
         
-            self?.loadingView?.removeFromSuperview()
+            self?.removeLoader()
         }
+        
     }
 }

@@ -10,8 +10,12 @@ import Foundation
 
 
 
-struct Photographers: Codable {
+struct Photographers: Equatable {
     let id: String
     let name: String
     let url: URL
+    
+    static func ==(lhs: Photographers, rhs: Photographers) -> Bool {
+        return lhs.id == rhs.id
+    }
 }

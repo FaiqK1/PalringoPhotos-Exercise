@@ -10,7 +10,7 @@ import Foundation
 
 class CachedRequest {
 
-    static let cache = URLCache(memoryCapacity: 40 * 1024 * 1024,
+    static let cache = URLCache(memoryCapacity: 40 * 1024 * 1024, //40mb enough?
                                 diskCapacity: 512 * 1024 * 1024,
                                 diskPath: "urlCache")
 

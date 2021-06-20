@@ -12,29 +12,86 @@ import UIKit
 class PhotographersViewController: UIViewController {
     
     //MARK: - OUTLETS:
+    @IBOutlet var loadingView: UIView?
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var refreshButton: UIButton!
     
     //MARK: - PROPERTIES:
     private var preApprovedPhotographers : [Photographers]?
-    private var profilePhotos = [UIImage]()
+    //private var profilePhotos = [UIImage]()
     private var selectedId    = String()
     private var selectedName  = String()
-    private var selectedImage = UIImage()
+    private var selectedImage : UIImage?
+    private var imageViewHeight : CGFloat = 125
     
     
+    //Visible only when no photographers loaded
+    @IBAction func refreshPressed(_ sender: UIButton) {
+        sender.preventRepeatedPresses()
+        showLoader()
+        fetchPhotographers()
+    }
 }
 
+
+
 //MARK: - VC Life Cycle
+
 extension PhotographersViewController {
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.title = "Tap to browse photos"
+        self.title = "Select a photographer"
+        setUpUI()
+        showLoader()
         fetchPhotographers()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(hideTableView), name: Notification.Name(rawValue: "hidePhotographersTableView"), object: nil)
     }
     
-    //MARK: - FETCHING PHOTOGRAPHERS
+    //MARK: - SET UP UI
+    fileprivate func setUpUI() {
+        refreshButton.layer.borderWidth = 1.0
+        refreshButton.layer.borderColor = UIColor.white.cgColor
+        refreshButton.layer.cornerRadius = 12
+    }
+    
+    
+    
+}
+
+
+//MARK: - LOADER
+
+extension PhotographersViewController {
+    
+    fileprivate func removeLoader() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.loadingView?.removeFromSuperview()
+        }
+    }
+    
+    fileprivate func showLoader() {
+        if let loadingView = loadingView {
+            self.view.addSubview(loadingView)
+            self.view.bringSubviewToFront(loadingView)
+            loadingView.layer.cornerRadius = 5
+            loadingView.sizeToFit()
+            loadingView.center = loadingCenter(forView: self.view)
+        }
+    }
+}
+
+
+
+//MARK: - FETCHING PHOTOGRAPHERS
+
+extension PhotographersViewController {
+    
+    
     fileprivate func fetchPhotographers() {
         // Note: this would be a network call to retrieve photographers most likely.
         // Just using a crude/quick way of setting up photographers
@@ -43,45 +100,74 @@ extension PhotographersViewController {
             Photographers(id: EnumPhotographers.dersascha.rawValue, name: EnumPhotographers.dersascha.displayName, url: EnumPhotographers.dersascha.imageURL),
             Photographers(id: EnumPhotographers.photographybytosh.rawValue, name: EnumPhotographers.photographybytosh.displayName, url: EnumPhotographers.photographybytosh.imageURL)
         ]
-        fetchPhotos(preApprovedPhotographers!)
+        
+        refreshTableView()
+        //fetchProfilePhotos(preApprovedPhotographers!)
     
     }
     
-    func fetchPhotos(_ photographers: [Photographers]) {
+    /*
+    fileprivate func fetchProfilePhotos(_ photographers: [Photographers]) {
         
         for photographer in photographers {
-            //print("NAME: \(photographer.name) URL: \(photographer.url)")
-            
-            //Thought i would utilize the CURRENT CachedRequest Class here
-            _ = CachedRequest.request(url: photographer.url) { data, isCached in
-                guard let data = data else { return }
+            URLSession.shared.dataTask(with: photographer.url) { [weak self] (data, response, error) in
+                guard let self = self else { return }
+                
+                guard let data = data, error == nil else {
+                    DispatchQueue.main.async {
+                        self.tableView.alpha = 0
+                    }
+                    
+                    self.removeLoader()
+                    return
+                }
                 guard let img = UIImage(data: data) else { return }
                 
-                if isCached {
-                    self.profilePhotos.append(img)
-                    
-                } else {
-                    self.profilePhotos.append(img)
+                //>> Update Profile Photo UIImage Array
+                self.profilePhotos.append(img)
+                   
+                if photographer.id == photographers.last?.id {
+                    self.refreshTableView()
+                
                 }
-                self.refreshTableView()
-                //FIXME: This approach is risky, cache could send back images in a different order
-            }
+            }.resume()
+            
         }
+        
+        print("photoCount: \(self.profilePhotos.count)")
+        //self.refreshTableView()
     }
+     */
     
-    //MARK: - REFRESH TABLEVIEW
-    fileprivate func refreshTableView() {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
+    //FIXME: IMAGES often return in wrong order / could be related to tableView.deque.... Need to investigate further
 }
 
 
 //MARK: - TableView
 extension PhotographersViewController: UITableViewDataSource, UITableViewDelegate {
     
+    //MARK: - TABLEVIEW HELPERS
+    @objc fileprivate func hideTableView() {
+        
+        DispatchQueue.main.async {
+            self.showLoader() //for UX
+            self.tableView.alpha = 0
+        }
+        removeLoader() //for UX
+    }
+    
+    fileprivate func refreshTableView() {
+        DispatchQueue.main.async {
+            self.tableView.alpha = 1
+            self.tableView.reloadData()
+            
+            self.loadingView?.removeFromSuperview()
+        }
+        
+    }
+    
     //MARK: DATA SOURCE FUNCTIONS
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return preApprovedPhotographers?.count ?? 0
     }
@@ -89,26 +175,14 @@ extension PhotographersViewController: UITableViewDataSource, UITableViewDelegat
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         tableView.separatorStyle = .none
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: EnumIdentifiers.photographers.cellId, for: indexPath)
-        //Cell Settings:
-        cell.textLabel?.textColor   = .white
-        cell.imageView?.contentMode = .scaleToFill
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: EnumIdentifiers.photographers.cellId, for: indexPath) as? PhotographersTableViewCell else { return UITableViewCell() }
         
-        guard let photographer = preApprovedPhotographers?[indexPath.row] else {
-            cell.imageView?.image = nil
-            cell.textLabel?.text = "Error retrieving name"
-            return cell
-        }
-        
-        //APPLY IMAGES when they have all been loaded
-        //Note i would not adopt this approach but i went with this as i already had preApprovedPhotographers data in place.
-        if profilePhotos.count == preApprovedPhotographers?.count {
-            cell.imageView?.image = profilePhotos[indexPath.row]
-            cell.textLabel?.text  = photographer.name//preApprovedPhotographers?[indexPath.row].name
-        } else {
-            cell.imageView?.image = nil
-            cell.textLabel?.text  = photographer.name//preApprovedPhotographers?[indexPath.row].name
-        }
+        //Cell settings:
+        cell.profileImageView?.layer.cornerRadius = (cell.profileImageView?.bounds.height ?? imageViewHeight) / 2
+        cell.profileImageView?.layer.borderWidth = 1.0
+        cell.profileImageView?.layer.borderColor = EnumColours.greyThemeColour.colour.cgColor
+        cell.profileImageView?.image = nil
+        cell.profilePhoto = preApprovedPhotographers?[indexPath.row]
         
         return cell
     }
@@ -121,20 +195,29 @@ extension PhotographersViewController: UITableViewDataSource, UITableViewDelegat
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        //print("\(preApprovedPhotographers![indexPath.row].name)")
         
-        goToPhotos(name:preApprovedPhotographers![indexPath.row].name, id: preApprovedPhotographers![indexPath.row].id, image: profilePhotos[indexPath.row])
+        guard let selectedCell = self.tableView.cellForRow(at: indexPath) as? PhotographersTableViewCell else {
+            return
+        }
+        
+        
+        goToPhotos(name:preApprovedPhotographers![indexPath.row].name,
+                   id: preApprovedPhotographers![indexPath.row].id,
+                   image: selectedCell.profileImageView?.image)
+        
+        
     }
 }
 
 //MARK: - SEGUE Action & Preparation
 extension PhotographersViewController {
     
-    private func goToPhotos(name: String, id: String, image: UIImage) {
+    private func goToPhotos(name: String, id: String, image: UIImage?) {
         selectedId    = id
         selectedName  = name
-        selectedImage = image
         
+        image == nil ? (selectedImage = nil) : (selectedImage = image)
+        //selectedImage = image
         performSegue(withIdentifier: EnumSegues.photographersToPhotos.segueIdentifier, sender: nil)
     }
     

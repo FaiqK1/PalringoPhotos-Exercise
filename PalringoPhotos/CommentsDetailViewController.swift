@@ -12,6 +12,7 @@ class CommentsDetailViewController: UIViewController {
     
     //MARK: - OUTLETS
     @IBOutlet var loadingView: UIView?
+    @IBOutlet weak var commentsTitle: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
     
@@ -23,40 +24,40 @@ class CommentsDetailViewController: UIViewController {
     }
     private var comments : [PhotoComment]?
     
-
+    
+    
     deinit {
         print("MEMORY RELEASED - CommentsDetailVC")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
-    fileprivate func refreshTableView() {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
-    
-    
-    
-
 }
 
-//MARK: - FETCH COMMENTS
+//MARK: - VC Life Cycle
+extension CommentsDetailViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        showLoader()
+    }
+    
+    @IBAction func closePressed(_ sender: UIButton) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+}
+
+
+//MARK: - LOADER
 
 extension CommentsDetailViewController {
     
     fileprivate func removeLoader() {
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { //Just for the visuals
             self.loadingView?.removeFromSuperview()
         }
     }
     
-    func fetchComments() {
-        guard let photo = selectedPhoto else { return }
-        
-        //TODO: Placed in quickly - need to check this works------
+    fileprivate func showLoader() {
         if let loadingView = loadingView {
             self.view.addSubview(loadingView)
             self.view.bringSubviewToFront(loadingView)
@@ -64,37 +65,73 @@ extension CommentsDetailViewController {
             loadingView.sizeToFit()
             loadingView.center = loadingCenter(forView: self.view)
         }
-        //-------------------------------------------------------
-        
-        FlickrFetcher().getPhotoComments(for: photo) { [weak self] (comments) in
-            //print(comments)s
-            self?.comments = comments
-            self?.refreshTableView()
-            
-            self?.removeLoader()
-            
-            
-        }
     }
 }
 
 
+//MARK: - FETCH COMMENTS
+
+extension CommentsDetailViewController {
+    
+    
+    private func fetchComments() {
+        guard let photo = selectedPhoto else { return }
+        
+        //NEW
+        let endPoint = FlickrEndpoint.getPhotoComments(photoId: photo.id)
+        FlickrFetcher.shared.getPhotoComments(endpoint: endPoint) { [weak self] (commentsArray) in
+            
+            commentsArray.isEmpty ? self?.hideTableView() : self?.loadComments(commentsArray: commentsArray)
+            
+            self?.removeLoader()
+        }
+    }
+}
+
+//MARK: - TABLVIEW HELPERS:
+extension CommentsDetailViewController {
+    
+    fileprivate func refreshTableView() {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    fileprivate func hideTableView() {
+        DispatchQueue.main.async {
+            self.tableView.alpha = 0
+        }
+    }
+    
+    fileprivate func loadComments(commentsArray: [PhotoComment]) {
+        self.comments = commentsArray
+        
+        DispatchQueue.main.async {
+            self.commentsTitle.text = "Comments(\(commentsArray.count)):"
+        }
+        self.refreshTableView()
+    }
+}
 
 //MARK: - TABLEVIEW DELEGATE
+
 extension CommentsDetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
+
 //MARK: - TABLEVIEW DATA SOURCE
+
 extension CommentsDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let count = comments?.count
-        if count == 0 {
-            tableView.alpha = 0
-        }
-        return count ?? 0
+//        let count = comments?.count
+//        if count == 0 {
+//            tableView.alpha = 0
+//        }
+//        return count ?? 0
+        return comments?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -104,7 +141,9 @@ extension CommentsDetailViewController: UITableViewDataSource {
         }
         
         cell.authorLbl.text             = "Author: \(comments?[indexPath.row].author ?? "Unknown")"
-        cell.commentsLbl.attributedText = comments?[indexPath.row].comment.htmlToAttributedString
+        cell.commentsLbl.attributedText = comments?[indexPath.row].comment //.htmlToAttributedString
+        //Probably not best place for this convertion, noticed some choppy behaviour on scroll for a photo with loads of comments (on load before cache)
+        //TODO: Perhaps convert before comments are placed into tableView.deque - currently done at Comments model initalizer.
         
         return cell
     }
